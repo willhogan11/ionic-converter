@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title></title>
+
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+    <script src="cordova.js"></script>
+    <script type="text/javascript">
+      // This solution is taken from here:
+      // http://stackoverflow.com/questions/17626202/fahrenheit-and-celsius-bidirectional-conversion-in-angularjs
+
+      angular.module('converter', ['ionic'])
+
+      .controller("ConvCtrl", function($scope) {
+        $scope.data = { celsius: 0 };
+        $scope.data["fahrenheit"] = $scope.data.celsius * 9.0 / 5.0 + 32
+
+        // Keep track of who was last edited
+        $scope.edited = null;
+        $scope.markEdited = function(which) {
+          $scope.edited = which;
+        };
+        // Only edit if the correct field is being modified
+        $scope.$watch('data.fahrenheit', function(value) {
+          if ($scope.edited == 'F') {
+            $scope.data.celsius = parseFloat(((value - 32) * (5.0 / 9.0)).toFixed(2));
+          }
+
+        });
+        $scope.$watch('data.celsius', function(value) {
+          if ($scope.edited == 'C') {
+            $scope.data.fahrenheit = parseFloat(((value * (9.0 / 5.0)) + 32).toFixed(2));
+          }
+        });
+      });
+    </script>
+
+  </head>
+  <body ng-app="converter" ng-controller="ConvCtrl">
+
+    <ion-pane>
+      <ion-header-bar class="bar-stable">
+        <h1 class="title">Converter</h1>
+      </ion-header-bar>
+      <ion-content>
+
+        <div class="list list-inset">
+          <label class="item item-input item-stacked-label">
+            <span class="input-label">Celsius</span>
+            <input type="number" ng-model="data.celsius" ng-change="markEdited('C')" />
+          </label>
+          <label class="item item-input item-stacked-label">
+            <span class="input-label">Fahrenheit</span>
+            <input type="number" ng-model="data.fahrenheit" ng-change="markEdited('F')" />
+          </label>
+        </div>
+
+      </ion-content>
+    </ion-pane>
+  </body>
+</html>
